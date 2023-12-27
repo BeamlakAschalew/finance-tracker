@@ -1,7 +1,17 @@
-// LET'S DO THIS HAHAHAHAHAHAHAHAHAHAHAHA
+import db_controller.DBInstance;
+
+import java.sql.Connection;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("MAHAHAHAHAHA");
+        DBInstance db = new DBInstance();
+        Connection conn;
+        try {
+            conn = db.connectDB();
+            System.out.println(conn.getMetaData());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }
