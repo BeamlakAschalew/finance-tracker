@@ -87,6 +87,8 @@ public class LoginUI extends JPanel {
         }
     }
 
+    /**
+     * This fetches the user info based on the username and password from the database<br>Returns `true` if user exists and `false` if the user doesn't exist or if the credentials are incorrect*/
     private boolean performLogin(String username, String password) {
         GetUserInfo gui = new GetUserInfo(username, password);
         ArrayList<UserInfo> u = gui.getUser();

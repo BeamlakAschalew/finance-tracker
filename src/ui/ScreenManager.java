@@ -2,10 +2,11 @@ package ui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class ScreenManager {
+
+   /**
+    * This display method controls and runs the entire UI */
     public void display() {
         JFrame frame = new JFrame("CardLayout Example");
         frame.setTitle("Login Page");
@@ -15,31 +16,26 @@ public class ScreenManager {
         frame.setLocationRelativeTo(null);
 
         CardLayout cardLayout = new CardLayout();
-        JPanel cardPanel = new JPanel(cardLayout);
+        JPanel container = new JPanel(cardLayout);
 
-        JPanel loginScreen = new JPanel();
-        JPanel transactionsScreen = new JPanel();
+        LoginUI loginUI = new LoginUI(frame, container);
+        TransactionsUI transactionsUI = new TransactionsUI(frame, container);
 
-        LoginUI loginUI = new LoginUI(frame, cardPanel);
-        TransactionsUI transactionsUI = new TransactionsUI(frame, cardPanel);
-
-        loginScreen.setLayout(new BorderLayout());
-        loginScreen.add(loginUI, BorderLayout.CENTER);
-
-        transactionsScreen.add(transactionsUI);
-
-        cardPanel.add(loginScreen, "loginScreen");
-        cardPanel.add(transactionsScreen, "transactionsScreen");
+        // Register the panels or in our case the screens to the card manager with a specific name
+        container.add(loginUI, "loginScreen");
+        container.add(transactionsUI, "transactionsScreen");
 
         // Set the initial screen to be displayed
-        cardLayout.show(cardPanel, "loginScreen");
+        cardLayout.show(container, "transactionsScreen");
 
+        // Listen to a login result from the login screen and navigate to transactions screen
+        // if it is authenticated successfully and displaying a message if not
         loginUI.setLoginEventListener(new LoginEventListener() {
             @Override
             public void onLoginResult(boolean result) {
                 if (result) {
                     System.out.println("Login successful");
-                    cardLayout.show(cardPanel, "transactionsScreen"); // Switch to another screen, for example
+                    cardLayout.show(container, "transactionsScreen"); // Switch to another screen, for example
                     frame.setSize(800, 600);
                 } else {
                     System.out.println("Login failed");
@@ -48,15 +44,17 @@ public class ScreenManager {
                 }
             }
         });
+
+        // Navigate back to the login screen
         transactionsUI.setButtonListener(new BackButtonListener() {
             @Override
             public void onBackbuttonClicked() {
-                cardLayout.show(cardPanel, "loginScreen"); // Switch to another screen, for example
+                cardLayout.show(container, "loginScreen");
                 frame.setSize(600, 400);
             }
         });
 
-        frame.add(cardPanel);
+        frame.add(container);
         frame.setVisible(true);
     }
 }
