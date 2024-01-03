@@ -8,7 +8,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
 interface LoginEventListener {
@@ -16,7 +15,7 @@ interface LoginEventListener {
 }
 
 
-public class LoginFrame extends JPanel {
+public class LoginUI extends JPanel {
 
     private JTextField usernameTextField;
     private JPasswordField passwordField;
@@ -27,11 +26,18 @@ public class LoginFrame extends JPanel {
         this.loginEventListener = listener;
     }
 
-    public LoginFrame() {
+    JFrame parentFrame;
+    JPanel parentPanel;
+
+    public LoginUI(JFrame mainFrame, JPanel cardLayout) {
+        parentFrame = mainFrame;
+        parentPanel = cardLayout;
         initializeUI();
     }
 
     private void initializeUI() {
+
+        parentFrame.setSize(600, 400);
 
         // Create components
         usernameTextField = new JTextField(20);

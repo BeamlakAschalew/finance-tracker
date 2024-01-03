@@ -6,30 +6,41 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ScreenManager {
-    private static CardLayout cardLayout;
-    private static JPanel cardPanel;
-
-
     public void display() {
         JFrame frame = new JFrame("CardLayout Example");
         frame.setTitle("Login Page");
         frame.setSize(600, 400);
+        frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
 
-        cardLayout = new CardLayout();
-        cardPanel = new JPanel(cardLayout);
+        CardLayout cardLayout = new CardLayout();
+        JPanel cardPanel = new JPanel(cardLayout);
 
-        // Screen 1
-        JPanel screen1 = new JPanel();
-        screen1.setLayout(new BorderLayout());
-        LoginFrame loginFrame = new LoginFrame();
-        loginFrame.setLoginEventListener(new LoginEventListener() {
+        JPanel loginScreen = new JPanel();
+        JPanel transactionsScreen = new JPanel();
+
+        LoginUI loginUI = new LoginUI(frame, cardPanel);
+        TransactionsUI transactionsUI = new TransactionsUI(frame, cardPanel);
+
+        loginScreen.setLayout(new BorderLayout());
+        loginScreen.add(loginUI, BorderLayout.CENTER);
+
+        transactionsScreen.add(transactionsUI);
+
+        cardPanel.add(loginScreen, "loginScreen");
+        cardPanel.add(transactionsScreen, "transactionsScreen");
+
+        // Set the initial screen to be displayed
+        cardLayout.show(cardPanel, "loginScreen");
+
+        loginUI.setLoginEventListener(new LoginEventListener() {
             @Override
             public void onLoginResult(boolean result) {
                 if (result) {
                     System.out.println("Login successful");
-                    cardLayout.show(cardPanel, "screen2"); // Switch to another screen, for example
+                    cardLayout.show(cardPanel, "transactionsScreen"); // Switch to another screen, for example
+                    frame.setSize(800, 600);
                 } else {
                     System.out.println("Login failed");
                     // Perform actions for unsuccessful login
@@ -37,30 +48,15 @@ public class ScreenManager {
                 }
             }
         });
-        screen1.add(loginFrame, BorderLayout.CENTER);
-
-        // Screen 2
-        JPanel screen2 = new JPanel();
-        screen2.add(new JLabel("Screen 2"));
-        JButton switchToScreen1Button = new JButton("Switch to Screen 1");
-        switchToScreen1Button.addActionListener(new ActionListener() {
+        transactionsUI.setButtonListener(new BackButtonListener() {
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-
+            public void onBackbuttonClicked() {
+                cardLayout.show(cardPanel, "loginScreen"); // Switch to another screen, for example
+                frame.setSize(600, 400);
             }
         });
-        screen2.add(switchToScreen1Button);
-
-        // Add screens to the cardPanel
-        cardPanel.add(screen1, "screen1");
-        cardPanel.add(screen2, "screen2");
-
-        // Set the initial screen to be displayed
-        cardLayout.show(cardPanel, "screen1");
 
         frame.add(cardPanel);
         frame.setVisible(true);
     }
-
-
 }
