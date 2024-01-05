@@ -10,45 +10,52 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 
-interface LoginEventListener {
-    void onLoginResult(boolean result);
+interface SignupEventListener {
+    void onSignupResult(boolean result);
 }
 
 
-public class LoginUI extends JPanel {
+public class SignupUI extends JPanel {
 
     private JTextField usernameTextField;
     private JPasswordField passwordField;
+    private JPasswordField passwordConfirmation;
+    private JTextField emailField;
+    private JTextField firstNameField;
+    private JTextField lastNameField;
 
-    private LoginEventListener loginEventListener;
+    private SignupEventListener signupEventListener;
 
-    public void setLoginEventListener(LoginEventListener listener) {
-        this.loginEventListener = listener;
+    public void setSignupEventListener(SignupEventListener listener) {
+        this.signupEventListener = listener;
     }
 
     JFrame parentFrame;
     JPanel parentPanel;
-    CardLayout parentLayout;
 
-    public LoginUI(JFrame mainFrame, JPanel panel, CardLayout cardLayout) {
+    public SignupUI(JFrame mainFrame, JPanel cardLayout) {
         parentFrame = mainFrame;
-        parentPanel = panel;
-        parentLayout = cardLayout;
+        parentPanel = cardLayout;
         initializeUI();
     }
 
     private void initializeUI() {
-
+        parentFrame.setTitle("Signup");
         parentFrame.setSize(600, 400);
+
+        JLabel signupLabel = new JLabel("Signup");
+        signupLabel.setFont(new Font("Poppins", Font.BOLD, 24));
+
+        usernameTextField = new JTextField(20);
 
         // Create components
         usernameTextField = new JTextField(20);
         passwordField = new JPasswordField(20);
-        JButton loginButton = new JButton("Login");
-        JButton signupButton = new JButton("Signup instead");
-
-        JLabel loginLabel = new JLabel("Login");
-        loginLabel.setFont(new Font("Poppins", Font.BOLD, 24));
+        emailField = new JTextField(20);
+        passwordConfirmation = new JPasswordField(20);
+        firstNameField = new JTextField(20);
+        lastNameField = new JTextField(20);
+        JButton signupButton = new JButton("Signup");
 
         // Set layout manager
         setLayout(new GridBagLayout());
@@ -57,39 +64,56 @@ public class LoginUI extends JPanel {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        add(loginLabel, gbc);
+        add(signupLabel, gbc);
 
         // Add components to the frame
         gbc.gridx = 0;
         gbc.gridy = 1;
+        add(new JLabel("First name:"), gbc);
+        gbc.gridx = 1;
+        add(firstNameField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        add(new JLabel("Last name:"), gbc);
+        gbc.gridx = 1;
+        add(lastNameField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        add(new JLabel("Email:"), gbc);
+        gbc.gridx = 1;
+        add(emailField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 4;
         add(new JLabel("Username:"), gbc);
         gbc.gridx = 1;
         add(usernameTextField, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 5;
         add(new JLabel("Password:"), gbc);
         gbc.gridx = 1;
         add(passwordField, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 3;
-        add(loginButton, gbc);
+        gbc.gridy = 6;
+        add(new JLabel("Repeat password:"), gbc);
         gbc.gridx = 1;
+        add(passwordConfirmation, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
         add(signupButton, gbc);
 
         // Add action listener to the login button
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-               loginEventListener.onLoginResult(performLogin(usernameTextField.getText(), new String(passwordField.getPassword())));
-            }
-        });
-
         signupButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                parentLayout.show(parentPanel, "signupScreen");
+            public void actionPerformed(ActionEvent e) {
+                signupEventListener.onSignupResult(performLogin(usernameTextField.getText(), new String(passwordField.getPassword())));
             }
         });
 

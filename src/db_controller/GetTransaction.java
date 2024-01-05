@@ -25,8 +25,6 @@ public class GetTransaction {
                 transactions.add(new Transaction(results.getInt("txn_id"), results.getInt("account_id"), results.getInt("category_id"), results.getDouble("amount"), results.getString("notes"), results.getString("type"), results.getString("date")));
             }
         } catch (SQLException ex) {
-
-
             ex.printStackTrace();
         }
 

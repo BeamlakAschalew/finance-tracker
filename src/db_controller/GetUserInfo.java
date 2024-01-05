@@ -10,7 +10,6 @@ import java.util.ArrayList;
 public class GetUserInfo {
 
         String username, password;
-
         public GetUserInfo (String username, String password) {
             this.username = username;
             this.password = password;
@@ -30,7 +29,6 @@ public class GetUserInfo {
                 ResultSet resultSet = statement.executeQuery();
 
                 while (resultSet.next()) {
-                    System.out.println(resultSet.getString("first_name"));
                     users.add(new UserInfo( resultSet.getString("first_name"), resultSet.getString("last_name"), resultSet.getString("username"), resultSet.getString("email"), resultSet.getString("created_at"), resultSet.getInt("id")));
                 }
             } catch (SQLException e) {

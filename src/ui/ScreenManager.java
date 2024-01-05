@@ -9,7 +9,7 @@ public class ScreenManager {
     * This display method controls and runs the entire UI */
     public void display() {
         JFrame frame = new JFrame("CardLayout Example");
-        frame.setTitle("Login Page");
+        frame.setTitle("Home Page");
         frame.setSize(600, 400);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -18,15 +18,17 @@ public class ScreenManager {
         CardLayout cardLayout = new CardLayout();
         JPanel container = new JPanel(cardLayout);
 
-        LoginUI loginUI = new LoginUI(frame, container);
+        LoginUI loginUI = new LoginUI(frame, container, cardLayout);
         TransactionsUI transactionsUI = new TransactionsUI(frame, container);
+        SignupUI signupUI = new SignupUI(frame, container);
 
         // Register the panels or in our case the screens to the card manager with a specific name
         container.add(loginUI, "loginScreen");
         container.add(transactionsUI, "transactionsScreen");
+        container.add(signupUI, "signupScreen");
 
         // Set the initial screen to be displayed
-        cardLayout.show(container, "transactionsScreen");
+        cardLayout.show(container, "loginScreen");
 
         // Listen to a login result from the login screen and navigate to transactions screen
         // if it is authenticated successfully and displaying a message if not
