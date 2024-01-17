@@ -1,6 +1,7 @@
 package ui;
 
 import db_controller.GetUserInfo;
+import model.LoggedInUser;
 import model.UserInfo;
 
 import javax.swing.*;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 
 
 interface LoginEventListener {
-    void onLoginResult(boolean result);
+    void onLoginResult(LoggedInUser result);
 }
 
 
@@ -92,23 +93,18 @@ public class LoginUI extends JPanel {
                 parentLayout.show(parentPanel, "signupScreen");
             }
         });
-
-        // Set Nimbus Look and Feel for a nice appearance (if available)
-        try {
-            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-            SwingUtilities.updateComponentTreeUI(this);
-        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
      * This fetches the user info based on the username and password from the database<br>Returns `true` if user exists and `false` if the user doesn't exist or if the credentials are incorrect*/
-    private boolean performLogin(String username, String password) {
-        GetUserInfo gui = new GetUserInfo(username, password);
+    private LoggedInUser performLogin(String username, String password) {
+        GetUserInfo gui = new GetUserInfo(username.toLowerCase(), password);
         ArrayList<UserInfo> u = gui.getUser();
-
-        return u.size() != 0;
+        if (u.size() > 0) {
+            return new LoggedInUser(u.get(0).username, u.get(0).fname, u.get(0).lname, u.get(0).email, true);
+        } else {
+            return new LoggedInUser(false);
+        }
     }
 }
 

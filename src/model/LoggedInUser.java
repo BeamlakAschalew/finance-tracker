@@ -1,20 +1,24 @@
 package model;
 
-import com.mysql.cj.log.Log;
-
 public class LoggedInUser {
-    String username;
-    String password;
+    public String firstName, lastName, email, username;
+
+
     boolean isLoggedIn;
 
-    LoggedInUser() {
-
+    public LoggedInUser(String un, String fn, String ln, String em, boolean loggedIn) {
+        username = un;
+        isLoggedIn = loggedIn;
+        firstName = fn;
+        lastName = ln;
+        email = em;
     }
 
-    LoggedInUser(String u, String p, boolean l) {
-        username = u;
-        password = p;
-        isLoggedIn = l;
+    public LoggedInUser(boolean loggedIn) {
+        isLoggedIn = loggedIn;
     }
 
+    public boolean isLoggedIn() {
+        return isLoggedIn;
+    }
 }

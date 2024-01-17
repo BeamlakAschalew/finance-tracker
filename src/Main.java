@@ -1,5 +1,5 @@
 // LET'S DO THIS!
-
+import com.formdev.flatlaf.FlatLightLaf;
 import ui.ScreenManager;
 public class Main {
     /**
@@ -9,6 +9,7 @@ public class Main {
         new ScreenManager().display();
     }
     public static void main(String[] args) {
+        FlatLightLaf.setup();
         new Main();
     }
 }

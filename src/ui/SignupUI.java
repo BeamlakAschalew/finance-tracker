@@ -1,17 +1,17 @@
 package ui;
 
-import db_controller.GetUserInfo;
-import model.UserInfo;
+import components.Components;
+import db_controller.SignupUser;
+import model.SignupResponse;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 
 interface SignupEventListener {
-    void onSignupResult(boolean result);
+    void onSignupResult(SignupResponse result);
 }
 
 
@@ -32,10 +32,22 @@ public class SignupUI extends JPanel {
 
     JFrame parentFrame;
     JPanel parentPanel;
+    CardLayout parentLayout;
 
-    public SignupUI(JFrame mainFrame, JPanel cardLayout) {
+
+    void clearInputs() {
+        firstNameField.setText("");
+        lastNameField.setText("");
+        usernameTextField.setText("");
+        emailField.setText("");
+        passwordConfirmation.setText("");
+        passwordField.setText("");
+    }
+
+    public SignupUI(JFrame mainFrame, JPanel panel, CardLayout cardLayout) {
         parentFrame = mainFrame;
-        parentPanel = cardLayout;
+        parentPanel = panel;
+        parentLayout = cardLayout;
         initializeUI();
     }
 
@@ -56,6 +68,7 @@ public class SignupUI extends JPanel {
         firstNameField = new JTextField(20);
         lastNameField = new JTextField(20);
         JButton signupButton = new JButton("Signup");
+        JButton loginButton = new JButton("Login Instead");
 
         // Set layout manager
         setLayout(new GridBagLayout());
@@ -108,31 +121,60 @@ public class SignupUI extends JPanel {
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         add(signupButton, gbc);
+        gbc.gridx = 3;
+        add(loginButton, gbc);
 
         // Add action listener to the login button
         signupButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                signupEventListener.onSignupResult(performLogin(usernameTextField.getText(), new String(passwordField.getPassword())));
+                signupEventListener.onSignupResult(performSignup(usernameTextField.getText(), new String(passwordField.getPassword()), new String(passwordConfirmation.getPassword()), firstNameField.getText(), lastNameField.getText(), emailField.getText()));
             }
         });
 
-        // Set Nimbus Look and Feel for a nice appearance (if available)
-        try {
-            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-            SwingUtilities.updateComponentTreeUI(this);
-        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                parentLayout.show(parentPanel, "loginScreen");
+            }
+        });
     }
 
     /**
      * This fetches the user info based on the username and password from the database<br>Returns `true` if user exists and `false` if the user doesn't exist or if the credentials are incorrect*/
-    private boolean performLogin(String username, String password) {
-        GetUserInfo gui = new GetUserInfo(username, password);
-        ArrayList<UserInfo> u = gui.getUser();
+    private SignupResponse performSignup(String username, String password, String passwordRepeat, String firstName, String lastName, String email) {
 
-        return u.size() != 0;
+        if (username.length() < 5) {
+            Components.displayOptionPane("Username should be at least 5 characters long");
+            return new SignupResponse(2);
+        }
+        if (password.length() < 8) {
+            Components.displayOptionPane("Password should be at least 8 characters long");
+            return new SignupResponse(2);
+        }
+        if (passwordRepeat.compareTo(password) != 0) {
+            Components.displayOptionPane("The passwords entered don't match");
+            return new SignupResponse(2);
+        }
+
+        if (firstName.length() < 2 || lastName.length() < 2) {
+            Components.displayOptionPane("Name should be at least 2 characters long");
+            return new SignupResponse(2);
+        }
+
+        if (!email.contains("@")) {
+            Components.displayOptionPane("Enter a valid email address");
+            return new SignupResponse(2);
+        }
+
+        SignupUser signup = new SignupUser(firstName, lastName, username.toLowerCase(), email, password);
+
+        if (signup.checkUsernameAndEmail()) {
+            return new SignupResponse(1);
+        }
+
+
+        return signup.registerUser();
     }
 }
 
