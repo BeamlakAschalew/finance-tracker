@@ -91,6 +91,7 @@ public class LoginUI extends JPanel {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 parentLayout.show(parentPanel, "signupScreen");
+                parentFrame.setTitle("Signup");
             }
         });
     }

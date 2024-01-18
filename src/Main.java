@@ -1,6 +1,10 @@
 // LET'S DO THIS!
+import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import ui.ScreenManager;
+
+import javax.swing.*;
+
 public class Main {
     /**
      * Everything in the app starts and stops running here, everything being done in the display method
@@ -9,7 +13,12 @@ public class Main {
         new ScreenManager().display();
     }
     public static void main(String[] args) {
-        FlatLightLaf.setup();
-        new Main();
+        try {
+            UIManager.setLookAndFeel(new FlatLightLaf());
+            FlatLaf.updateUI();
+            new Main();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
