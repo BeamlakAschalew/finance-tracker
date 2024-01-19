@@ -1,17 +1,19 @@
 package model;
 
 public class Transaction {
-    public int txnId, accountId, categoryId;
-    public double amount;
-    public String notes, type, date;
+    private String[] columnNames;
+    private Object[][] tableData;
 
-    public Transaction(int tid, int acId, int cId, double am, String nt, String ty, String dt) {
-        txnId = tid;
-        accountId = acId;
-        categoryId = cId;
-        amount = am;
-        notes = nt;
-        type = ty;
-        date = dt;
+    public Transaction(String[] columnNames, Object[][] tableData) {
+        this.columnNames = columnNames;
+        this.tableData = tableData;
+    }
+
+    public String[] getColumnNames() {
+        return columnNames;
+    }
+
+    public Object[][] getTableData() {
+        return tableData;
     }
 }
