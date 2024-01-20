@@ -1,12 +1,19 @@
 package ui;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
+import components.Components;
 import db_controller.GetTransaction;
 import model.LoggedInUser;
 import model.Transaction;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -23,17 +30,35 @@ public class TransactionsUI extends JPanel {
 
     CardLayout parentLayout;
 
-    JPanel transactionPanel = new JPanel();
-    JPanel top = new JPanel();
-    JPanel middle = new JPanel();
-    JPanel bottom = new JPanel();
-    JScrollPane tableScroller;
-    JButton apply = new JButton("Apply");
+    private JPanel transactionPanel = new JPanel();
+    private JPanel top = new JPanel();
+    private JPanel middle = new JPanel();
+    private JPanel bottom = new JPanel();
+    private JScrollPane tableScroller;
+    private JButton apply = new JButton("Apply");
+    private JButton settings = new JButton("Settings");
+    private JButton logoutExit = new JButton("Logout and exit");
+    private JTextField minAmountField = new JTextField(6);
+    private JTextField maxAmountField = new JTextField(6);
+    private JLabel incomeThisMonth = new JLabel("Income this month: 0");
+    private JLabel expenditureThisMonth = new JLabel("Expenditure this month: 0");
+    private DatePickerSettings toDateSetting = new DatePickerSettings();
+    private DatePickerSettings fromDateSetting = new DatePickerSettings();
+    private DatePicker fromDate = new DatePicker(fromDateSetting);
+    private DatePicker toDate = new DatePicker(toDateSetting);
+    private boolean darkTheme = false;
+    private JButton toggleThemeButton = new JButton(darkTheme ? "Light theme" : "Dark theme");
 
     private JTable transactionsTable;
 
     private BackButtonListener backButtonListener;
     private LoggedInUser currentUser;
+    private GetTransaction gt;
+    private JPanel mainTable = new JPanel();
+    private JLabel empty = new JLabel("No records found :(");
+    private DefaultTableModel model;
+    String[] types = new String[] {"Income", "Expenditure", "Any"};
+    private JComboBox<String> typeCB = new JComboBox<>(types);
 
 
     public void setButtonListener(BackButtonListener listener) {
@@ -54,14 +79,15 @@ public class TransactionsUI extends JPanel {
 
 
     public void initializeUI() {
-        GetTransaction gt = new GetTransaction(currentUser.username);
+        gt = new GetTransaction(currentUser.username);
         setLayout(new BorderLayout());
         transactionPanel.setLayout(new BorderLayout());
 
         // Create a DefaultTableModel to hold the data and column names
         Transaction tr = gt.getTransactions();
-        DefaultTableModel model = new DefaultTableModel(tr.getTableData(), tr.getColumnNames());
-
+        model = new DefaultTableModel(tr.getTableData(), tr.getColumnNames());
+        model.fireTableDataChanged();
+        countMonthly();
         // Create a JTable with the DefaultTableModel
         transactionsTable = new JTable(model);
         transactionsTable.setEnabled(false);
@@ -77,13 +103,12 @@ public class TransactionsUI extends JPanel {
         hello.setBounds(40, 60, 350, 30);
         hello.setFont(new Font("Candara", Font.PLAIN, 20));
 
-        JLabel incomeThisMonth = new JLabel("Income this month: 1000");
-        JLabel expenditureThisMonth = new JLabel("Expenditure this month: 2000");
-
         incomeThisMonth.setBounds(400, 60, 450, 30);
         incomeThisMonth.setFont(new Font("Candara", Font.PLAIN, 20));
         expenditureThisMonth.setBounds(400, 100, 450, 30);
         expenditureThisMonth.setFont(new Font("Candara", Font.PLAIN, 20));
+
+        System.out.println(model.getValueAt(3, 1));
 
         JButton addNew = new JButton("+ Add new transaction");
         addNew.setBounds(900, 80, 210, 40);
@@ -97,87 +122,82 @@ public class TransactionsUI extends JPanel {
         top.add(expenditureThisMonth);
         top.add(addNew);
         top.add(topSeparator);
-        top.setBackground(Color.GREEN);
 
         JPanel tableHeader = new JPanel();
         tableHeader.setLayout(null);
         tableHeader.setPreferredSize(new Dimension(1300, 45));
-        tableHeader.setBackground(Color.CYAN);
 
-        JPanel mainTable = new JPanel();
+
         mainTable.setLayout(null);
         mainTable.setPreferredSize(new Dimension(1300, 300));
-        mainTable.setBackground(Color.BLUE);
 
         JLabel filter = new JLabel("Filter");
-        filter.setBounds(30, 0, 50, 40);
+        filter.setBounds(10, 0, 40, 40);
         filter.setFont(new Font("Candara", Font.BOLD, 17));
         tableHeader.add(filter);
 
         JLabel from = new JLabel("From:");
-        from.setBounds(100, 0, 50, 40);
+        from.setBounds(60, 0, 50, 40);
         from.setFont(new Font("Candara", Font.PLAIN, 17));
         tableHeader.add(from);
 
-        DatePickerSettings fromDateSetting = new DatePickerSettings();
-        DatePicker fromDate = new DatePicker(fromDateSetting);
-        fromDate.setBounds(170, 5, 200, 35);
+        fromDate.setBounds(120, 5, 200, 35);
         tableHeader.add(fromDate);
 
         JLabel to = new JLabel("To:");
-        to.setBounds(400, 0, 40, 40);
+        to.setBounds(340, 0, 40, 40);
         to.setFont(new Font("Candara", Font.PLAIN, 17));
         tableHeader.add(to);
 
-        DatePickerSettings toDateSetting = new DatePickerSettings();
-        DatePicker toDate = new DatePicker(toDateSetting);
-        toDate.setBounds(460, 5, 200, 35);
+        toDate.setBounds(390, 5, 200, 35);
         tableHeader.add(toDate);
 
-        JLabel amount = new JLabel("Amount:");
-        amount.setBounds(690, 0, 70, 40);
-        amount.setFont(new Font("Candara", Font.PLAIN, 17));
-        tableHeader.add(amount);
+        JLabel minAmountLabel = new JLabel("Min:");
+        minAmountLabel.setBounds(610, 0, 40, 40);
+        minAmountLabel.setFont(new Font("Candara", Font.PLAIN, 17));
+        tableHeader.add(minAmountLabel);
 
-        JTextField amountField = new JTextField(6);
-        amountField.setBounds(780, 5, 100, 35);
-        tableHeader.add(amountField);
+        minAmountField.setBounds(660, 5, 80, 35);
+        tableHeader.add(minAmountField);
+
+        JLabel maxAmountLabel = new JLabel("Max:");
+        maxAmountLabel.setBounds(760, 0, 40, 40);
+        maxAmountLabel.setFont(new Font("Candara", Font.PLAIN, 17));
+        tableHeader.add(maxAmountLabel);
+
+        maxAmountField.setBounds(810, 5, 80, 35);
+        tableHeader.add(maxAmountField);
 
         JLabel type = new JLabel("Type: ");
-        type.setBounds(920, 0, 40, 40);
+        type.setBounds(910, 0, 40, 40);
         tableHeader.add(type);
 
-        String[] types = new String[] {"Income", "Expenditure"};
-        JComboBox<String> typeCB = new JComboBox<>(types);
-        typeCB.setBounds(980, 10, 120, 25);
+        typeCB.setBounds(960, 10, 120, 25);
         typeCB.setSelectedIndex(0);
         tableHeader.add(typeCB);
 
-
-        apply.setBounds(1130, 5, 110, 35);
+        apply.setBounds(1100, 5, 110, 35);
         tableHeader.add(apply);
-        apply.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                JOptionPane.showMessageDialog(null, "Selected Date: " + toDate.getDate());
-            }
-        });
 
         transactionsTable.setBounds(0, 0, 1300, 455);
         tableScroller = new JScrollPane(transactionsTable);
-        tableScroller.setBounds(0,0,1250, 455);
+        tableScroller.setBounds(0,0,1300, 455);
+
+        empty.setBounds(500, 150, 300, 120);
+        empty.setFont(new Font("Candara", Font.BOLD, 35));
+
         mainTable.add(tableScroller);
 
         middle.setLayout(new BorderLayout());
         middle.setPreferredSize(new Dimension(1300, 500));
         middle.add(tableHeader, BorderLayout.NORTH);
         middle.add(mainTable, BorderLayout.CENTER);
-        middle.setBackground(Color.ORANGE);
 
-        bottom.setLayout(new BorderLayout());
         bottom.setPreferredSize(new Dimension(1250, 50));
-        bottom.setBackground(Color.red);
 
+        bottom.add(settings);
+        bottom.add(logoutExit);
+        bottom.add(toggleThemeButton);
 
         transactionPanel.add(top, BorderLayout.NORTH);
         transactionPanel.add(middle, BorderLayout.WEST);
@@ -198,5 +218,123 @@ public class TransactionsUI extends JPanel {
 //                }
 //        );
         add(transactionPanel, BorderLayout.CENTER);
+
+        apply.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                applyCustomFilter();
+            }
+        });
+
+        logoutExit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                System.exit(0);
+            }
+        });
+
+        model.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent tableModelEvent) {
+                checkTableData();
+            }
+        });
+
+        toggleThemeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                toggleTheme();
+            }
+        });
+    }
+
+    private void applyCustomFilter() {
+        double minAmount = 0;
+        double maxAmount = 0;
+        try {
+            System.out.println(minAmountField.getText().isEmpty());
+            System.out.println(maxAmountField.getText().isEmpty());
+            if (minAmountField.getText() != null && !minAmountField.getText().isEmpty()) {
+                minAmount = Double.parseDouble(minAmountField.getText());
+            }
+            if (maxAmountField.getText() != null && !maxAmountField.getText().isEmpty()) {
+                maxAmount = Double.parseDouble(maxAmountField.getText());
+            }
+        } catch (NumberFormatException e) {
+            Components.displayOptionPane("Only numbers are allowed in amount!");
+            return;
+        }
+        gt = new GetTransaction(currentUser.username);
+        Transaction updatedTransactionData = gt.getTransactions(gt.generateQuery(fromDate.getDate(), toDate.getDate(), minAmount, maxAmount, String.valueOf(typeCB.getSelectedItem())));
+
+        // Get the model from the existing table
+        DefaultTableModel model = (DefaultTableModel) transactionsTable.getModel();
+
+        // Remove existing rows
+        model.setRowCount(0);
+
+        for (Object[] row : updatedTransactionData.getTableData()) {
+            model.addRow(row);
+        }
+        model.fireTableDataChanged();
+    }
+
+    private void checkTableData() {
+        System.out.println("TABLE UPDATED");
+        if (model.getRowCount() >= 1) {
+            Component[] components = mainTable.getComponents();
+            for (int i = 0; i < components.length; i++) {
+                if (components[i].equals(empty)) {
+                    mainTable.remove(i);
+                }
+            }
+            mainTable.revalidate();
+            mainTable.add(tableScroller);
+            mainTable.repaint();
+        } else {
+            Component[] components = mainTable.getComponents();
+            for (int i = 0; i < components.length; i++) {
+                if (components[i].equals(tableScroller)) {
+                    mainTable.remove(i);
+                }
+            }
+            mainTable.revalidate();
+            mainTable.add(empty);
+            mainTable.repaint();
+        }
+    }
+
+    private void countMonthly() {
+        double exp = 0;
+        double inc = 0;
+        String type = "";
+        int rows = model.getRowCount();
+        for (int i = 1; i < rows; i++) {
+            type = String.valueOf(model.getValueAt(i, 3));
+            if (type.equals("Income")) {
+                inc = inc + Double.parseDouble(model.getValueAt(i, 1).toString());
+            } else {
+                exp = exp + Double.parseDouble(model.getValueAt(i, 1).toString());
+            }
+
+        }
+        incomeThisMonth.setText("Total income: " + inc);
+        expenditureThisMonth.setText("Total expenditure: " + exp);
+    }
+
+    private void toggleTheme() {
+        try {
+            if (darkTheme) {
+                toggleThemeButton.setText("Dark theme");
+                UIManager.setLookAndFeel(new FlatLightLaf());
+            } else {
+                toggleThemeButton.setText("Light theme");
+                UIManager.setLookAndFeel(new FlatDarculaLaf());
+            }
+            FlatLaf.updateUI();
+            darkTheme = !darkTheme;
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
     }
 }

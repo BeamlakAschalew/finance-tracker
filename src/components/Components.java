@@ -20,22 +20,6 @@ public class Components {
         frame.setLocation(centerX, centerY);
     }
 
-    private static boolean darkTheme = true;
-
-    public static void toggleTheme() {
-        try {
-            if (darkTheme) {
-                UIManager.setLookAndFeel(new FlatLightLaf());
-            } else {
-                UIManager.setLookAndFeel(new FlatDarkLaf());
-            }
-            FlatLaf.updateUI();
-            darkTheme = !darkTheme;
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void setUIFont(Font font) {
         // Set the font for all UIManager keys
         UIManager.put("Button.font", font);

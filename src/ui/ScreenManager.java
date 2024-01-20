@@ -75,7 +75,6 @@ public class ScreenManager {
         transactionsUI.setButtonListener(new BackButtonListener() {
             @Override
             public void onBackbuttonClicked() {
-                Components.toggleTheme();
                 cardLayout.show(container, "loginScreen");
                 frame.setSize(600, 400);
                 frame.setTitle("Login");

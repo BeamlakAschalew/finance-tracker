@@ -121,7 +121,7 @@ public class SignupUI extends JPanel {
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         add(signupButton, gbc);
-        gbc.gridx = 3;
+        gbc.gridx = 2;
         add(loginButton, gbc);
 
         // Add action listener to the login button
