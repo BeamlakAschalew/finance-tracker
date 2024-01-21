@@ -102,7 +102,7 @@ public class LoginUI extends JPanel {
         GetUserInfo gui = new GetUserInfo(username.toLowerCase(), password);
         ArrayList<UserInfo> u = gui.getUser();
         if (u.size() > 0) {
-            return new LoggedInUser(u.get(0).username, u.get(0).fname, u.get(0).lname, u.get(0).email, true);
+            return new LoggedInUser(u.get(0).username, u.get(0).fname, u.get(0).lname, u.get(0).email, true, u.get(0).id);
         } else {
             return new LoggedInUser(false);
         }

@@ -8,6 +8,7 @@ import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
 import components.Components;
 import db_controller.GetTransaction;
+import db_controller.InsertTransaction;
 import model.LoggedInUser;
 import model.Transaction;
 
@@ -18,6 +19,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
 
 interface BackButtonListener {
     void onBackbuttonClicked();
@@ -59,6 +61,7 @@ public class TransactionsUI extends JPanel {
     private DefaultTableModel model;
     String[] types = new String[] {"Income", "Expenditure", "Any"};
     private JComboBox<String> typeCB = new JComboBox<>(types);
+    private JButton reset = new JButton("R");
 
 
     public void setButtonListener(BackButtonListener listener) {
@@ -88,6 +91,7 @@ public class TransactionsUI extends JPanel {
         model = new DefaultTableModel(tr.getTableData(), tr.getColumnNames());
         model.fireTableDataChanged();
         countMonthly();
+        //checkTableData();
         // Create a JTable with the DefaultTableModel
         transactionsTable = new JTable(model);
         transactionsTable.setEnabled(false);
@@ -107,8 +111,6 @@ public class TransactionsUI extends JPanel {
         incomeThisMonth.setFont(new Font("Candara", Font.PLAIN, 20));
         expenditureThisMonth.setBounds(400, 100, 450, 30);
         expenditureThisMonth.setFont(new Font("Candara", Font.PLAIN, 20));
-
-        System.out.println(model.getValueAt(3, 1));
 
         JButton addNew = new JButton("+ Add new transaction");
         addNew.setBounds(900, 80, 210, 40);
@@ -179,6 +181,9 @@ public class TransactionsUI extends JPanel {
         apply.setBounds(1100, 5, 110, 35);
         tableHeader.add(apply);
 
+        reset.setBounds(1220, 5, 50, 35);
+        tableHeader.add(reset);
+
         transactionsTable.setBounds(0, 0, 1300, 455);
         tableScroller = new JScrollPane(transactionsTable);
         tableScroller.setBounds(0,0,1300, 455);
@@ -234,8 +239,10 @@ public class TransactionsUI extends JPanel {
         });
 
         model.addTableModelListener(new TableModelListener() {
+
             @Override
             public void tableChanged(TableModelEvent tableModelEvent) {
+                System.out.println("TABLE UPDATED");
                 checkTableData();
             }
         });
@@ -244,6 +251,20 @@ public class TransactionsUI extends JPanel {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 toggleTheme();
+            }
+        });
+
+        addNew.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                showTransactionAddWindow(parentFrame);
+            }
+        });
+
+        reset.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                resetTable();
             }
         });
     }
@@ -261,7 +282,7 @@ public class TransactionsUI extends JPanel {
                 maxAmount = Double.parseDouble(maxAmountField.getText());
             }
         } catch (NumberFormatException e) {
-            Components.displayOptionPane("Only numbers are allowed in amount!");
+            Components.displayOptionPane("Only numbers are allowed in amount!", 0);
             return;
         }
         gt = new GetTransaction(currentUser.username);
@@ -336,5 +357,142 @@ public class TransactionsUI extends JPanel {
         } catch (UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
+    }
+
+
+    private void showTransactionAddWindow(JFrame parentFrame) {
+        JDialog dialog = new JDialog(parentFrame, "Add transaction", false);
+        dialog.setSize(500, 500);
+        JPanel transactionInputPanel = new JPanel();
+        JTextField amount = new JTextField(10);
+        JLabel amountText = new JLabel("Amount:");
+        JComboBox<String> typeCB = new JComboBox<>(new String[]{"Income", "Expenditure"});
+        JLabel typeText = new JLabel("Type:");
+        JComboBox<String> categoryCB = new JComboBox<>(new String[]{"Bill", "School", "Recreation"});
+        JLabel categoryText = new JLabel("Category:");
+        DatePickerSettings transactionDateSetting = new DatePickerSettings();
+        DatePicker transactionDate = new DatePicker(transactionDateSetting);
+        JLabel dateText = new JLabel("Date:");
+        JButton addButton = new JButton("+ ADD");
+        JLabel notesText = new JLabel("Notes:");
+        JTextArea notes = new JTextArea(5, 15);
+
+        transactionInputPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        transactionInputPanel.add(new JLabel("Fill in the inputs to add a new transaction:"), gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        transactionInputPanel.add(amountText, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        transactionInputPanel.add(amount, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        transactionInputPanel.add(typeText, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        transactionInputPanel.add(typeCB, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.anchor = GridBagConstraints.WEST;
+        transactionInputPanel.add(categoryText, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        transactionInputPanel.add(categoryCB, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.anchor = GridBagConstraints.WEST;
+        transactionInputPanel.add(dateText, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        transactionInputPanel.add(transactionDate, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.anchor = GridBagConstraints.WEST;
+        transactionInputPanel.add(notesText, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 5;
+        transactionInputPanel.add(new JScrollPane(notes), gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        gbc.anchor = GridBagConstraints.EAST;
+        transactionInputPanel.add(addButton, gbc);
+
+        dialog.add(transactionInputPanel);
+        Components.centerDialogOnScreen(dialog);
+        dialog.setResizable(false);
+        dialog.setVisible(true);
+
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                System.out.println("CLICKED 1");
+                System.out.println(String.valueOf(typeCB.getSelectedItem()));
+                System.out.println("N: " + notes.getText());
+                if (addTransactionIntoDB(amount.getText(), String.valueOf(typeCB.getSelectedItem()), categoryCB.getSelectedIndex() + 1, transactionDate.getDate(), notes.getText())) {
+                    Components.displayOptionPane("Transaction added successfully!", 1);
+                    dialog.setVisible(false);
+                } else {
+                    Components.displayOptionPane("Transaction added failed!", 0);
+                }
+
+            }
+        });
+    }
+
+    boolean addTransactionIntoDB(String amount, String type, int category, LocalDate date, String notes) {
+        double trAmount = 0;
+        try {
+            if (amount != null && !amount.isEmpty()) {
+                trAmount = Double.parseDouble(amount);
+                if (trAmount == 0) {
+                    Components.displayOptionPane("You don't want to add 0 do you?", 0);
+                    return false;
+                }
+            } else {
+                Components.displayOptionPane("Please enter amount", 0);
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            Components.displayOptionPane("Only numbers are allowed in amount field!", 0);
+            return false;
+        }
+
+        InsertTransaction addTr = new InsertTransaction(currentUser.username);
+        return addTr.addTransaction(addTr.generateQuery(trAmount, type, category, date, notes, currentUser.id));
+    }
+
+    private void resetTable() {
+        minAmountField.setText("");
+        maxAmountField.setText("");
+        fromDate.setText("");
+        toDate.setText("");
+        typeCB.setSelectedIndex(0);
+
+        Transaction updatedTransactionData = gt.getTransactions();
+        DefaultTableModel model = (DefaultTableModel) transactionsTable.getModel();
+        model.setRowCount(0);
+
+        for (Object[] row : updatedTransactionData.getTableData()) {
+            model.addRow(row);
+        }
+        model.fireTableDataChanged();
     }
 }

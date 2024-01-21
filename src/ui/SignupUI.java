@@ -146,25 +146,25 @@ public class SignupUI extends JPanel {
     private SignupResponse performSignup(String username, String password, String passwordRepeat, String firstName, String lastName, String email) {
 
         if (username.length() < 5) {
-            Components.displayOptionPane("Username should be at least 5 characters long");
+            Components.displayOptionPane("Username should be at least 5 characters long", 0);
             return new SignupResponse(2);
         }
         if (password.length() < 8) {
-            Components.displayOptionPane("Password should be at least 8 characters long");
+            Components.displayOptionPane("Password should be at least 8 characters long", 0);
             return new SignupResponse(2);
         }
         if (passwordRepeat.compareTo(password) != 0) {
-            Components.displayOptionPane("The passwords entered don't match");
+            Components.displayOptionPane("The passwords entered don't match", 0);
             return new SignupResponse(2);
         }
 
         if (firstName.length() < 2 || lastName.length() < 2) {
-            Components.displayOptionPane("Name should be at least 2 characters long");
+            Components.displayOptionPane("Name should be at least 2 characters long", 0);
             return new SignupResponse(2);
         }
 
         if (!email.contains("@")) {
-            Components.displayOptionPane("Enter a valid email address");
+            Components.displayOptionPane("Enter a valid email address", 0);
             return new SignupResponse(2);
         }
 

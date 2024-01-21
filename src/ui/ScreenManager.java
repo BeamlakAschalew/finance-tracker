@@ -62,25 +62,26 @@ public class ScreenManager {
             @Override
             public void onSignupResult(SignupResponse result) {
                 if (result.getErrorCode() == 0) {
+                    Components.displayOptionPane("You have signed-up successfully!", 1);
                     cardLayout.show(container, "loginScreen");
                 } else if (result.getErrorCode() == 1) {
-                    Components.displayOptionPane("Username or email already exists");
+                    Components.displayOptionPane("Username or email already exists", 0);
                 } else if (result.getErrorCode() == 3) {
-                    Components.displayOptionPane("Unknown error occurred on signup");
+                    Components.displayOptionPane("Unknown error occurred on signup", 0);
                 }
             }
         });
 
         // Navigate back to the login screen
-        transactionsUI.setButtonListener(new BackButtonListener() {
-            @Override
-            public void onBackbuttonClicked() {
-                cardLayout.show(container, "loginScreen");
-                frame.setSize(600, 400);
-                frame.setTitle("Login");
-                Components.centerFrameOnScreen(frame);
-            }
-        });
+//        transactionsUI.setButtonListener(new BackButtonListener() {
+//            @Override
+//            public void onBackbuttonClicked() {
+//                cardLayout.show(container, "loginScreen");
+//                frame.setSize(600, 400);
+//                frame.setTitle("Login");
+//                Components.centerFrameOnScreen(frame);
+//            }
+//        });
 
         frame.add(container);
         frame.setVisible(true);

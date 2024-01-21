@@ -23,7 +23,7 @@ public class GetTransaction {
      *  Gets list of transactions from the database
      * */
     public Transaction getTransactions() {
-        String query = "SELECT amount AS Amount, date AS Date, type AS Type, category_name AS Category, notes AS Notes FROM transactions JOIN accounts ON transactions.account_id = accounts.account_id JOIN users ON users.id = accounts.user_id JOIN transaction_category ON transactions.category_id = transaction_category.category_id WHERE users.username = ?;";
+        String query = "SELECT amount AS Amount, date AS Date, type AS Type, category_name AS Category, notes AS Notes FROM transactions JOIN users ON users.id = transactions.user_id JOIN transaction_categories ON transactions.category_id = transaction_categories.category_id WHERE users.username = ?;";
         Object[][] dataArray = new Object[0][];
         try {
             Connection conn = dbInstance.connectDB();
@@ -90,7 +90,7 @@ public class GetTransaction {
         return new Transaction(columnNames, dataArray);
     }
     public String generateQuery(LocalDate startDate, LocalDate endDate, double minAmount, double maxAmount, String type) {
-        String query = "SELECT amount AS Amount, date AS Date, type AS Type, category_name AS Category, notes AS Notes FROM transactions JOIN accounts ON transactions.account_id = accounts.account_id JOIN users ON users.id = accounts.user_id JOIN transaction_category ON transactions.category_id = transaction_category.category_id WHERE users.username = '" + username + "'";
+        String query = "SELECT amount AS Amount, date AS Date, type AS Type, category_name AS Category, notes AS Notes FROM transactions JOIN users ON users.id = transactions.user_id JOIN transaction_categories ON transactions.category_id = transaction_categories.category_id WHERE users.username = '" + username + "'";
 
         if (startDate != null) {
             if (!startDate.toString().isEmpty()) {
