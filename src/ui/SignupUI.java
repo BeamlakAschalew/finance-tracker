@@ -56,7 +56,7 @@ public class SignupUI extends JPanel {
         parentFrame.setSize(600, 400);
 
         JLabel signupLabel = new JLabel("Signup");
-        signupLabel.setFont(new Font("Poppins", Font.BOLD, 24));
+        signupLabel.setFont(new Font("Candara", Font.BOLD, 24));
 
         usernameTextField = new JTextField(20);
 
@@ -121,14 +121,17 @@ public class SignupUI extends JPanel {
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         add(signupButton, gbc);
+
         gbc.gridx = 2;
         add(loginButton, gbc);
 
         // Add action listener to the login button
         signupButton.addActionListener(new ActionListener() {
             @Override
+
             public void actionPerformed(ActionEvent e) {
-                signupEventListener.onSignupResult(performSignup(usernameTextField.getText(), new String(passwordField.getPassword()), new String(passwordConfirmation.getPassword()), firstNameField.getText(), lastNameField.getText(), emailField.getText()));
+                signupEventListener.
+                        onSignupResult(performSignup(usernameTextField.getText(), new String(passwordField.getPassword()), new String(passwordConfirmation.getPassword()), firstNameField.getText(), lastNameField.getText(), emailField.getText()));
             }
         });
 

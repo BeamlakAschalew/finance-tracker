@@ -44,9 +44,12 @@ public class GetTransaction {
                 rowData[0] = rowCount;
                 for (int i = 1; i <= columnCount; i++) {
                     rowData[i] = results.getObject(i);
+                    System.out.println("ROW: " + rowData[i]);
                 }
                 dataList.add(rowData);
+                System.out.println("DATA LIST: " + dataList);
             }
+            System.out.println("FINAL " + dataList);
 
             // Convert the List to a 2D array
             dataArray = new Object[dataList.size()][];

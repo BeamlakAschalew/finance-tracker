@@ -330,7 +330,7 @@ public class TransactionsUI extends JPanel {
         double inc = 0;
         String type = "";
         int rows = model.getRowCount();
-        for (int i = 1; i < rows; i++) {
+        for (int i = 0; i < rows; i++) {
             type = String.valueOf(model.getValueAt(i, 3));
             if (type.equals("Income")) {
                 inc = inc + Double.parseDouble(model.getValueAt(i, 1).toString());
@@ -475,7 +475,7 @@ public class TransactionsUI extends JPanel {
             return false;
         }
 
-        InsertTransaction addTr = new InsertTransaction(currentUser.username);
+        InsertTransaction addTr = new InsertTransaction();
         return addTr.addTransaction(addTr.generateQuery(trAmount, type, category, date, notes, currentUser.id));
     }
 

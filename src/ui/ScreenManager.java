@@ -15,7 +15,6 @@ public class ScreenManager {
 
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
 
         CardLayout cardLayout = new CardLayout();
         JPanel container = new JPanel(cardLayout);
@@ -30,9 +29,9 @@ public class ScreenManager {
         container.add(signupUI, "signupScreen");
 
         // Set the initial screen to be displayed
-        cardLayout.show(container, "signupScreen");
+        cardLayout.show(container, "loginScreen");
         frame.setSize(600, 400);
-        frame.setTitle("Signup");
+        frame.setTitle("Login");
         Components.centerFrameOnScreen(frame);
 
         // Listen to a login result from the login screen and navigate to transactions screen

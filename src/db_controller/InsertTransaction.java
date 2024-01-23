@@ -7,9 +7,7 @@ import java.sql.*;
 import java.time.LocalDate;
 
 public class InsertTransaction {
-    private String username;
-    public InsertTransaction(String username) {
-        this.username = username;
+    public InsertTransaction() {
     }
 
 
