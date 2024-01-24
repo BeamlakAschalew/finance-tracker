@@ -16,72 +16,33 @@ public class ScreenManager {
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        // Create a CardLayout object, this is used to give the feel of "switching" between screens
         CardLayout cardLayout = new CardLayout();
+
+        // Create a new JPanel with the LayoutManager being the cardLayout we created above
         JPanel container = new JPanel(cardLayout);
 
+        // Initialize the two screens: LoginUI and SignupUI here
         LoginUI loginUI = new LoginUI(frame, container, cardLayout);
-        TransactionsUI transactionsUI = new TransactionsUI(frame, container, cardLayout);
         SignupUI signupUI = new SignupUI(frame, container, cardLayout);
 
-        // Register the panels or in our case the screens to the card manager with a specific name
+
+        // Register the screens, namely the LoginUI and SignupUI by adding it to the panel
+        // and giving it a name constraint that can be used later to display that screen
         container.add(loginUI, "loginScreen");
-        container.add(transactionsUI, "transactionsScreen");
         container.add(signupUI, "signupScreen");
 
         // Set the initial screen to be displayed
         cardLayout.show(container, "loginScreen");
+
+        // Set the frame size to 600 x 400
         frame.setSize(600, 400);
         frame.setTitle("Login");
+
+        // This method gets the physical screen width and height and aligns the frame centrally
         Components.centerFrameOnScreen(frame);
 
-        // Listen to a login result from the login screen and navigate to transactions screen
-        // if it is authenticated successfully and displaying a message if not
-        loginUI.setLoginEventListener(new LoginEventListener() {
-            @Override
-            public void onLoginResult(LoggedInUser result) {
-                if (result.isLoggedIn()) {
-                    System.out.println("Login successful");
-                    transactionsUI.setCurrentUser(result);
-                    transactionsUI.initializeUI();
-                    cardLayout.show(container, "transactionsScreen");
-                    frame.setSize(1300, 700);
-                    frame.setTitle("Transactions");
-                    Components.centerFrameOnScreen(frame);
-                } else {
-                    System.out.println("Login failed");
-                    // Perform actions for unsuccessful login
-                    JOptionPane.showMessageDialog(null, "Invalid username or password", "Alert", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
-
-
-        signupUI.setSignupEventListener(new SignupEventListener() {
-            @Override
-            public void onSignupResult(SignupResponse result) {
-                if (result.getErrorCode() == 0) {
-                    Components.displayOptionPane("You have signed-up successfully!", 1);
-                    cardLayout.show(container, "loginScreen");
-                } else if (result.getErrorCode() == 1) {
-                    Components.displayOptionPane("Username or email already exists", 0);
-                } else if (result.getErrorCode() == 3) {
-                    Components.displayOptionPane("Unknown error occurred on signup", 0);
-                }
-            }
-        });
-
-        // Navigate back to the login screen
-//        transactionsUI.setButtonListener(new BackButtonListener() {
-//            @Override
-//            public void onBackbuttonClicked() {
-//                cardLayout.show(container, "loginScreen");
-//                frame.setSize(600, 400);
-//                frame.setTitle("Login");
-//                Components.centerFrameOnScreen(frame);
-//            }
-//        });
-
+        // Add the JPanel to the JFrame
         frame.add(container);
         frame.setVisible(true);
     }

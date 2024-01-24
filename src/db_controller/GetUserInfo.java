@@ -15,19 +15,19 @@ public class GetUserInfo {
             this.password = password;
         }
         ArrayList<UserInfo> users = new ArrayList<>();
+
+        // SQL query to fetch users with a specific username and password, it should return a single user since username cannot be repeated
         String query = "SELECT * FROM users WHERE username = ? AND password = MD5(?)";
 
-        DBInstance dbI = new DBInstance();
-
+        // method to fetch the user based on a specific username and password
         public ArrayList<UserInfo> getUser() {
-
             try  {
-                Connection conn = dbI.connectDB();
+                Connection conn = DBInstance.connectDB();
                 PreparedStatement statement = conn.prepareStatement(query);
                 statement.setString(1, username);
                 statement.setString(2, password);
                 ResultSet resultSet = statement.executeQuery();
-
+                // populate the array with values that come from the database
                 while (resultSet.next()) {
                     users.add(new UserInfo( resultSet.getString("first_name"), resultSet.getString("last_name"), resultSet.getString("username"), resultSet.getString("email"), resultSet.getString("created_at"), resultSet.getInt("id")));
                 }

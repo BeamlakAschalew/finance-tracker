@@ -1,5 +1,6 @@
 package db_controller;
 
+// this is the database configuration that consists of database name, username, password etc
 public class DBConfig {
     final static String dbName = "finance_test";
     final static String url = "localhost";

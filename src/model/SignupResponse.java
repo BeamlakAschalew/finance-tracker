@@ -1,5 +1,7 @@
 package model;
 
+// the use of this class is to hold error codes of a signup operation
+
 /**
  * <h1>Codes</h1>
  * 0. Successful

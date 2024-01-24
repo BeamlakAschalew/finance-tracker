@@ -1,5 +1,6 @@
 package model;
 
+// the use of this class is to contain information after the login operation is performed, it contains records from database
 public class UserInfo {
     public String fname, lname, username, email, created_at;
     public int id;

@@ -5,17 +5,25 @@ import java.awt.*;
 
 public class Components {
 
+    // method to display JOptionPane, it takes a message and status, status 0 means error and 1 means okay
     public static void displayOptionPane(String message, int status) {
         JOptionPane.showMessageDialog(null, message, status == 0 ? "Alert" : "Info", status);
     }
 
+    // this method takes a JFrame reference and centers the frame to the center
     public static void centerFrameOnScreen(JFrame frame) {
+        // get the physical screen size
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+        // calculate the X and Y coordinates inorder to center the frame
         int centerX = (int) (screenSize.getWidth() - frame.getWidth()) / 2;
         int centerY = (int) (screenSize.getHeight() - frame.getHeight()) / 2;
+
+        // set the frame's location to the calculated X and Y coordinate
         frame.setLocation(centerX, centerY);
     }
 
+    // this method does the same as the above one but for JDialog
     public static void centerDialogOnScreen(JDialog frame) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int centerX = (int) (screenSize.getWidth() - frame.getWidth()) / 2;
@@ -23,6 +31,7 @@ public class Components {
         frame.setLocation(centerX, centerY);
     }
 
+    // this method takes a font and assigns it to various swing components
     public static void setUIFont(Font font) {
         // Set the font for all UIManager keys
         UIManager.put("Button.font", font);
