@@ -29,7 +29,7 @@ public class InsertTransaction {
 
         // close the master query
         masterQuery += ");";
-
+        System.out.println(masterQuery);
         try {
             Connection conn = DBInstance.connectDB();
 

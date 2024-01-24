@@ -255,21 +255,7 @@ public class TransactionsUI extends JPanel {
         logoutExit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                // loop through the parentPanel's components and remove "transactionsScreen" since
-                // if we won't, it might cause a stackoverflow error
-                for (Component c : parentPanel.getComponents()) {
-                    if (c.getName() != null && c.getName().compareTo("transactionsScreen") == 0) {
-                        parentPanel.remove(c);
-                        parentPanel.revalidate();
-                        parentPanel.repaint();
-                    }
-                }
-
-                // Then show the loginScreen
-                parentLayout.show(parentPanel, "loginScreen");
-
-                // Call the setupUI to set the screen size and title again
-                loginUI.setupUI();
+               performLogout();
             }
         });
 
@@ -593,6 +579,7 @@ public class TransactionsUI extends JPanel {
         DatePicker transactionDate = new DatePicker(transactionDateSetting);
         JLabel dateText = new JLabel("Date:");
         JButton updateButton = new JButton("Update");
+        JButton deleteButton = new JButton("Delete");
         JLabel notesText = new JLabel("Notes:");
         JTextArea notes;
 
@@ -661,10 +648,28 @@ public class TransactionsUI extends JPanel {
         gbc.anchor = GridBagConstraints.EAST;
         transactionInputPanel.add(updateButton, gbc);
 
+        gbc.gridx = 1;
+        gbc.gridy = 6;
+        gbc.anchor = GridBagConstraints.EAST;
+        transactionInputPanel.add(deleteButton, gbc);
+
         dialog.add(transactionInputPanel);
         Components.centerDialogOnScreen(dialog);
         dialog.setResizable(false);
         dialog.setVisible(true);
+
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (performTransactionDelete(Integer.parseInt(rowData[5].toString()))) {
+                    Components.displayOptionPane("Transaction deleted successfully!", 1);
+                    dialog.setVisible(false);
+                    resetTable(false);
+                } else {
+                    Components.displayOptionPane("Transaction deletion failed!", 0);
+                }
+            }
+        });
 
         updateButton.addActionListener(new ActionListener() {
             @Override
@@ -747,6 +752,10 @@ public class TransactionsUI extends JPanel {
         return updateTr.updateTransaction();
     }
 
+    boolean performTransactionDelete(int txnId) {
+        return UpdateTransaction.deleteTransaction(txnId);
+    }
+
     // this method resets the table by fetching data without any parameters,
     // it takes a resetFields argument that specifies whether the user entered filters should be set to empty or ot
     private void resetTable(boolean resetFields) {
@@ -796,6 +805,7 @@ public class TransactionsUI extends JPanel {
         JLabel newPasswordConfirmText = new JLabel("Repeat password:");
 
         JButton updateButton = new JButton("Update");
+        JButton deleteButton = new JButton("Delete");
 
         userInputPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -863,10 +873,28 @@ public class TransactionsUI extends JPanel {
         gbc.anchor = GridBagConstraints.EAST;
         userInputPanel.add(updateButton, gbc);
 
+        gbc.gridx = 1;
+        gbc.gridy = 7;
+        gbc.anchor = GridBagConstraints.EAST;
+        userInputPanel.add(deleteButton, gbc);
+
         dialog.add(userInputPanel);
         Components.centerDialogOnScreen(dialog);
         dialog.setResizable(false);
         dialog.setVisible(true);
+
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (performUserDelete(currentUser.id)) {
+                    Components.displayOptionPane("You deleted your account successfully, adios!", 1);
+                    dialog.setVisible(false);
+                    performLogout();
+                } else {
+                    Components.displayOptionPane("Account deletion failed, you're stuck with us :)", 0);
+                }
+            }
+        });
 
         updateButton.addActionListener(new ActionListener() {
             @Override
@@ -924,6 +952,11 @@ public class TransactionsUI extends JPanel {
         return signup.updateUser();
     }
 
+    // this method deletes a user form the database
+    boolean performUserDelete(int id) {
+        return SignupUser.deleteUser(id);
+    }
+
     // this method takes a JTable and hides the last column which is about transaction id and it is unnecessary to the user
     private static void hideLastColumn(JTable table) {
         // get the table model from the JTable
@@ -936,5 +969,23 @@ public class TransactionsUI extends JPanel {
         columnModel.getColumn(lastIndex).setMinWidth(0);
         columnModel.getColumn(lastIndex).setMaxWidth(0);
         columnModel.getColumn(lastIndex).setWidth(0);
+    }
+
+    void performLogout() {
+        // loop through the parentPanel's components and remove "transactionsScreen" since
+        // if we won't, it might cause a stackoverflow error
+        for (Component c : parentPanel.getComponents()) {
+            if (c.getName() != null && c.getName().compareTo("transactionsScreen") == 0) {
+                parentPanel.remove(c);
+                parentPanel.revalidate();
+                parentPanel.repaint();
+            }
+        }
+
+        // Then show the loginScreen
+        parentLayout.show(parentPanel, "loginScreen");
+
+        // Call the setupUI to set the screen size and title again
+        loginUI.setupUI();
     }
 }

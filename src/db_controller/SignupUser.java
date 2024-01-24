@@ -97,6 +97,35 @@ public class SignupUser {
         return false;
     }
 
+    // this method deletes a user and returns true if it succeeded and false if it failed
+    static public boolean deleteUser(int id) {
+        String query = "DELETE FROM users WHERE id = ?";
+        try {
+            Connection conn = DBInstance.connectDB();
+
+            // prepare a statement
+            PreparedStatement statement = conn.prepareStatement(query);
+
+            // set the values of the placeholders with the actual user input
+            statement.setInt(1, id);
+
+            // execute the update
+            int affectedRowsCount = statement.executeUpdate();
+
+            // return true if one row is affected
+            if (affectedRowsCount == 1) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // return false if the code fails
+            return false;
+        }
+
+        // the code should not reach here since a value must be returned in the above blocks but we return false if it does
+        return false;
+    }
+
     // this method checks if username and email exists
     public boolean checkUsernameAndEmail() {
         try {

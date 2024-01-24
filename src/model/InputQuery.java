@@ -16,6 +16,7 @@ public class InputQuery {
         this.noteProvided = note;
         this.catId = catId;
         this.date = date;
+        this.accId = accId;
         this.amount = amount;
         this.type = type;
         this.notes = notes;
