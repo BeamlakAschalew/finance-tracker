@@ -1,7 +1,5 @@
 package ui;
 import components.Components;
-import model.LoggedInUser;
-import model.SignupResponse;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,10 +32,6 @@ public class ScreenManager {
 
         // Set the initial screen to be displayed
         cardLayout.show(container, "loginScreen");
-
-        // Set the frame size to 600 x 400
-        frame.setSize(600, 400);
-        frame.setTitle("Login");
 
         // This method gets the physical screen width and height and aligns the frame centrally
         Components.centerFrameOnScreen(frame);

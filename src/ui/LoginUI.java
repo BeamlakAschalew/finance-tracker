@@ -46,7 +46,7 @@ public class LoginUI extends JPanel {
         JButton signupButton = new JButton("Signup instead");
 
         JLabel loginLabel = new JLabel("Login");
-        loginLabel.setFont(new Font("Poppins", Font.BOLD, 24));
+        loginLabel.setFont(new Font("Candara", Font.BOLD, 24));
 
         // Set layout manager of the JPanel we extended to GridBag
         setLayout(new GridBagLayout());

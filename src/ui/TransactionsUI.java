@@ -19,10 +19,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.time.LocalDate;
 
 public class TransactionsUI extends JPanel {
@@ -61,11 +58,10 @@ public class TransactionsUI extends JPanel {
     private JPanel mainTable = new JPanel();
     private JLabel empty = new JLabel("No records found :(");
     private DefaultTableModel model;
-    String[] types = new String[] {"Income", "Expenditure", "Any"};
+    String[] types = new String[] {"Any", "Income", "Expenditure"};
     private JComboBox<String> typeCB = new JComboBox<>(types);
     private JButton reset = new JButton("R");
     private LoginUI loginUI;
-    JComboBox<String> categoryCB = new JComboBox<>(new String[]{"Bill", "Utilities", "Rent", "Mortgage", "Groceries", "Transportation", "Healthcare", "Entertainment", "Education", "Debt Repayment", "Personal care", "Miscellaneous", "Food"});
 
     public TransactionsUI(JFrame mainFrame, JPanel panel, CardLayout cardLayout, LoggedInUser currentUser, LoginUI loginScreen) {
         parentFrame = mainFrame;
@@ -236,7 +232,7 @@ public class TransactionsUI extends JPanel {
 
         // Add the top, middle and bottom conponents to the transactionPanel
         transactionPanel.add(top, BorderLayout.NORTH);
-        transactionPanel.add(middle, BorderLayout.WEST);
+        transactionPanel.add(middle, BorderLayout.CENTER);
         transactionPanel.add(bottom, BorderLayout.SOUTH);
 
         // add the transactionPanel to the center
@@ -340,8 +336,6 @@ public class TransactionsUI extends JPanel {
 
         // Checks and validates the numbers entered into the Min and Max amount fields
         try {
-            System.out.println(minAmountField.getText().isEmpty());
-            System.out.println(maxAmountField.getText().isEmpty());
             if (minAmountField.getText() != null && !minAmountField.getText().isEmpty()) {
                 minAmount = Double.parseDouble(minAmountField.getText());
             }
@@ -468,6 +462,7 @@ public class TransactionsUI extends JPanel {
         JTextField amount = new JTextField(10);
         JLabel amountText = new JLabel("Amount:");
         JComboBox<String> typeCB = new JComboBox<>(new String[]{"Income", "Expenditure"});
+        typeCB.setSelectedIndex(1);
         JLabel typeText = new JLabel("Type:");
         JLabel categoryText = new JLabel("Category:");
         DatePickerSettings transactionDateSetting = new DatePickerSettings();
@@ -476,6 +471,7 @@ public class TransactionsUI extends JPanel {
         JButton addButton = new JButton("+ ADD");
         JLabel notesText = new JLabel("Notes:");
         JTextArea notes = new JTextArea(5, 15);
+        JComboBox<String> categoryCB = new JComboBox<>(new String[]{"-", "Bill", "Utilities", "Rent", "Mortgage", "Groceries", "Transportation", "Healthcare", "Entertainment", "Education", "Debt Repayment", "Personal care", "Miscellaneous", "Food"});
 
         transactionInputPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -540,6 +536,19 @@ public class TransactionsUI extends JPanel {
         dialog.setResizable(false);
         dialog.setVisible(true);
 
+        typeCB.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent itemEvent) {
+                if (typeCB.getSelectedItem().toString().compareTo("Income") == 0) {
+                    categoryCB.setSelectedIndex(0);
+                    categoryCB.setEnabled(false);
+                    countTotalIncomeAndExpenditure();
+                } else {
+                    categoryCB.setEnabled(true);
+                }
+            }
+        });
+
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -549,6 +558,7 @@ public class TransactionsUI extends JPanel {
                     Components.displayOptionPane("Transaction added successfully!", 1);
                     dialog.setVisible(false);
                     resetTable(false);
+                    countTotalIncomeAndExpenditure();
                 } else {
                     // Show that it failed
                     Components.displayOptionPane("Transaction added failed!", 0);
@@ -568,9 +578,7 @@ public class TransactionsUI extends JPanel {
         // set the amount to the existing amount from the row
         JTextField amount = new JTextField(rowData[0].toString(), 10);
         JLabel amountText = new JLabel("Amount:");
-
         JComboBox<String> typeCB = new JComboBox<>(new String[]{"Income", "Expenditure"});
-
         // set the type to the existing type from the rows
         typeCB.setSelectedItem(rowData[2]);
         JLabel typeText = new JLabel("Type:");
@@ -582,6 +590,8 @@ public class TransactionsUI extends JPanel {
         JButton deleteButton = new JButton("Delete");
         JLabel notesText = new JLabel("Notes:");
         JTextArea notes;
+        JComboBox<String> categoryCB = new JComboBox<>(new String[]{"-", "Bill", "Utilities", "Rent", "Mortgage", "Groceries", "Transportation", "Healthcare", "Entertainment", "Education", "Debt Repayment", "Personal care", "Miscellaneous", "Food"});
+        categoryCB.setSelectedItem(rowData[3]);
 
         // if the notes that comes from the row is not empty, set the default text of the text area to the notes that comes from the rows array
         if (rowData[4] != null) {
@@ -658,6 +668,19 @@ public class TransactionsUI extends JPanel {
         dialog.setResizable(false);
         dialog.setVisible(true);
 
+        typeCB.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent itemEvent) {
+                if (typeCB.getSelectedItem().toString().compareTo("Income") == 0) {
+                    categoryCB.setSelectedIndex(0);
+                    categoryCB.setEnabled(false);
+                } else {
+                    categoryCB.setEnabled(true);
+                    categoryCB.setSelectedItem(rowData[3]);
+                }
+            }
+        });
+
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -665,6 +688,7 @@ public class TransactionsUI extends JPanel {
                     Components.displayOptionPane("Transaction deleted successfully!", 1);
                     dialog.setVisible(false);
                     resetTable(false);
+                    countTotalIncomeAndExpenditure();
                 } else {
                     Components.displayOptionPane("Transaction deletion failed!", 0);
                 }
@@ -680,6 +704,7 @@ public class TransactionsUI extends JPanel {
                     Components.displayOptionPane("Transaction updated successfully!", 1);
                     dialog.setVisible(false);
                     resetTable(false);
+                    countTotalIncomeAndExpenditure();
                 } else {
                     Components.displayOptionPane("Transaction update failed!", 0);
                 }

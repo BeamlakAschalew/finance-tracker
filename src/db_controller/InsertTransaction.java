@@ -7,9 +7,6 @@ import java.sql.*;
 import java.time.LocalDate;
 
 public class InsertTransaction {
-    public InsertTransaction() {
-    }
-
 
     // this method takes an InputQuery and adds a transaction into the database and returns true if it completed successfully and false if it failed
     public boolean addTransaction(InputQuery iq) {

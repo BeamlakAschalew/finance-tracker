@@ -137,7 +137,6 @@ public class SignupUI extends JPanel {
                 //  since errorCode 1 is username or email already existing we'll show error dialog pane
                 } else if (response.getErrorCode() == 1) {
                     Components.displayOptionPane("Username or email already exists", 0);
-
                 // since errorCode 3 is general error we'll display "Unknown error occurred"
                 } else if (response.getErrorCode() == 3) {
                     Components.displayOptionPane("Unknown error occurred on signup", 0);
