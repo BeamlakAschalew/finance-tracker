@@ -43,7 +43,9 @@ public class LoginUI extends JPanel {
         usernameTextField = new JTextField(20);
         passwordField = new JPasswordField(20);
         JButton loginButton = new JButton("Login");
+        loginButton.setBackground(new Color(33, 200, 255));
         JButton signupButton = new JButton("Signup instead");
+        signupButton.setBackground(new Color(206, 206, 206));
 
         JLabel loginLabel = new JLabel("Login");
         loginLabel.setFont(new Font("Candara", Font.BOLD, 24));

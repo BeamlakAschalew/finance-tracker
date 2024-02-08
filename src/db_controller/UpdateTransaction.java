@@ -61,7 +61,7 @@ public class UpdateTransaction {
             PreparedStatement statement = conn.prepareStatement(query);
 
             // replace the placeholders with the actual user inputs
-            statement.setDouble(1, txnId);
+            statement.setInt(1, txnId);
 
             // execute and assign the affected rows count to a variables
             int affectedRowsCount = statement.executeUpdate();

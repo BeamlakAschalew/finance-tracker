@@ -61,7 +61,9 @@ public class SignupUI extends JPanel {
         firstNameField = new JTextField(20);
         lastNameField = new JTextField(20);
         JButton signupButton = new JButton("Signup");
+        signupButton.setBackground(new Color(33, 200, 255));
         JButton loginButton = new JButton("Login Instead");
+        loginButton.setBackground(new Color(206, 206, 206));
 
         // Set layout manager of the JPanel of the SignupUI to GridBag
         setLayout(new GridBagLayout());

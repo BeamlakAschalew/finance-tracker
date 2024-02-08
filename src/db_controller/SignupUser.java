@@ -102,7 +102,6 @@ public class SignupUser {
         String query = "DELETE FROM users WHERE id = ?";
         try {
             Connection conn = DBInstance.connectDB();
-
             // prepare a statement
             PreparedStatement statement = conn.prepareStatement(query);
 

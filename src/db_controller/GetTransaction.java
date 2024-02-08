@@ -137,12 +137,12 @@ public class GetTransaction {
 
         // if minimum amount is not 0, add that as a parameter
         if (minAmount != 0) {
-                query += " AND amount > " + minAmount;
+                query += " AND amount >= " + minAmount;
         }
 
         // if maximum amount is not 0, add that as a parameter
         if (maxAmount != 0) {
-            query += " AND amount < " + maxAmount;
+            query += " AND amount =< " + maxAmount;
         }
 
         // if the type is not "Any" add "Income" or "Expenditure" as values for the "type"

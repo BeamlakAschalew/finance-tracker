@@ -469,6 +469,7 @@ public class TransactionsUI extends JPanel {
         DatePicker transactionDate = new DatePicker(transactionDateSetting);
         JLabel dateText = new JLabel("Date:");
         JButton addButton = new JButton("+ ADD");
+        addButton.setBackground(new Color(33, 200, 255));
         JLabel notesText = new JLabel("Notes:");
         JTextArea notes = new JTextArea(5, 15);
         JComboBox<String> categoryCB = new JComboBox<>(new String[]{"-", "Bill", "Utilities", "Rent", "Mortgage", "Groceries", "Transportation", "Healthcare", "Entertainment", "Education", "Debt Repayment", "Personal care", "Miscellaneous", "Food"});
@@ -587,7 +588,9 @@ public class TransactionsUI extends JPanel {
         DatePicker transactionDate = new DatePicker(transactionDateSetting);
         JLabel dateText = new JLabel("Date:");
         JButton updateButton = new JButton("Update");
+        updateButton.setBackground(new Color(33, 200, 255));
         JButton deleteButton = new JButton("Delete");
+        deleteButton.setBackground(new Color(255, 137, 108));
         JLabel notesText = new JLabel("Notes:");
         JTextArea notes;
         JComboBox<String> categoryCB = new JComboBox<>(new String[]{"-", "Bill", "Utilities", "Rent", "Mortgage", "Groceries", "Transportation", "Healthcare", "Entertainment", "Education", "Debt Repayment", "Personal care", "Miscellaneous", "Food"});
@@ -830,7 +833,9 @@ public class TransactionsUI extends JPanel {
         JLabel newPasswordConfirmText = new JLabel("Repeat password:");
 
         JButton updateButton = new JButton("Update");
+        updateButton.setBackground(new Color(33, 200, 255));
         JButton deleteButton = new JButton("Delete");
+        deleteButton.setBackground(new Color(255, 137, 108));
 
         userInputPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();

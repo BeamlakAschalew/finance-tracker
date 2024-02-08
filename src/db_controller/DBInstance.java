@@ -13,8 +13,7 @@ public class DBInstance {
             System.out.println("Success");
             return connection;
         }
-        catch (ClassNotFoundException | SQLException ex)
-        {
+        catch (ClassNotFoundException | SQLException ex) {
             ex.printStackTrace();
             return null;
         }
