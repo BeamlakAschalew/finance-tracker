@@ -17,7 +17,7 @@ public class GetUserInfo {
         ArrayList<UserInfo> users = new ArrayList<>();
 
         // SQL query to fetch users with a specific username and password, it should return a single user since username cannot be repeated
-        String query = "SELECT * FROM users WHERE username = ? AND password = MD5(?)";
+        String query = "SELECT * FROM users WHERE username = ? AND password = (SELECT standard_hash(?, 'MD5') FROM dual)";
 
         // method to fetch the user based on a specific username and password
         public ArrayList<UserInfo> getUser() {

@@ -20,7 +20,7 @@ public class GetTransaction {
     // this method gets transaction based on user id without any parameters
     public Transaction getTransactions() {
         // SQL query to fetch the transactions, uses inner-join operation between users, transactions and transaction_categories tables
-        String query = "SELECT amount, date, type, category_name, notes, txn_id FROM transactions JOIN users ON users.id = transactions.user_id JOIN transaction_categories ON transactions.category_id = transaction_categories.category_id WHERE users.id = ?;";
+        String query = "SELECT amount, txn_date, type, category_name, notes, txn_id FROM transactions JOIN users ON users.id = transactions.user_id JOIN transaction_categories ON transactions.category_id = transaction_categories.category_id WHERE users.id = ?";
 
         // create a 2D array that holds the values that come from the select operation
         Object[][] dataArray = new Object[0][];
@@ -119,19 +119,19 @@ public class GetTransaction {
     // this method generates a custom SQL query for fetching transactions based on the user's input
     public String generateQuery(LocalDate startDate, LocalDate endDate, double minAmount, double maxAmount, String type) {
         // create the base, minimal query
-        String query = "SELECT amount, date, type, category_name, notes, txn_id FROM transactions JOIN users ON users.id = transactions.user_id JOIN transaction_categories ON transactions.category_id = transaction_categories.category_id WHERE users.id = '" + id + "'";
+        String query = "SELECT amount, txn_date, type, category_name, notes, txn_id FROM transactions JOIN users ON users.id = transactions.user_id JOIN transaction_categories ON transactions.category_id = transaction_categories.category_id WHERE users.id = '" + id + "'";
 
         // if startDate is not empty, add that as a parameter
         if (startDate != null) {
             if (!startDate.toString().isEmpty()) {
-                query += "AND Date(date) >= Date('" + startDate + "')";
+                query += "AND txn_date >= TO_DATE('" + startDate + "', 'YYYY-MM-DD')";
             }
         }
 
         // if endDate is not empty, add that as a parameter
         if (endDate != null) {
             if (!endDate.toString().isEmpty()) {
-                query += " AND Date(date) <= Date('" + endDate + "')";
+                query += " AND txn_date <= TO_DATE('" + endDate + "', 'YYYY-MM-DD')";
             }
         }
 
@@ -155,7 +155,7 @@ public class GetTransaction {
         }
 
         // close the query
-        query += ";";
+        // query += ";";
 
         // return the query string
         return query;

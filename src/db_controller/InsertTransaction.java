@@ -16,7 +16,7 @@ public class InsertTransaction {
 
         // if date is provided add a date parameter to the values ()
         if (iq.dateProvided) {
-            masterQuery += ", '" + iq.date + "'";
+            masterQuery += ", TO_DATE('" + iq.date + "', 'YYYY-MM-DD')";
         }
 
         // if note is provided add a notes parameter to the values ()
@@ -25,7 +25,7 @@ public class InsertTransaction {
         }
 
         // close the master query
-        masterQuery += ");";
+        masterQuery += ")";
         System.out.println(masterQuery);
         try {
             Connection conn = DBInstance.connectDB();
@@ -62,7 +62,7 @@ public class InsertTransaction {
 
         // add a date field if a date is provided
         if (isDateProvided) {
-            query += ", date";
+            query += ", txn_date";
         }
 
         // add a notes field if a note is provided

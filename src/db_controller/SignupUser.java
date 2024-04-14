@@ -33,7 +33,7 @@ public class SignupUser {
 
     // this method registers a user and returns a SignupResponse object
     public SignupResponse registerUser() {
-        String query = "INSERT INTO users (first_name, last_name, username, email, password) VALUES (?, ?, ?, ?, MD5(?))";
+        String query = "INSERT INTO users (first_name, last_name, username, email, password) VALUES (?, ?, ?, ?, (SELECT standard_hash(?, 'MD5') FROM dual))";
         try {
             Connection conn = DBInstance.connectDB();
             PreparedStatement statement = conn.prepareStatement(query);
@@ -65,7 +65,7 @@ public class SignupUser {
 
     // this method updates a user and returns true if it succeeded and false if it failed
     public boolean updateUser() {
-        String query = "UPDATE users SET first_name = ?, last_name = ?, username = ?, email = ?, password = MD5(?) WHERE id = ?";
+        String query = "UPDATE users SET first_name = ?, last_name = ?, username = ?, email = ?, password = (SELECT standard_hash(?, 'MD5') FROM dual) WHERE id = ?";
         try {
             Connection conn = DBInstance.connectDB();
 
