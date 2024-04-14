@@ -2,12 +2,11 @@ package db_controller;
 
 // this is the database configuration that consists of database name, username, password etc
 public class DBConfig {
-    final static String dbName = "finance_test";
-    final static String url = "localhost";
-    public final static String path = "jdbc:mysql://" + url + "/" + dbName;
-    public final static String username = "root";
+    final static String url = "localhost"; // Assuming your Oracle database is running locally
+    final static int port = 1521; // Default Oracle port
+    final static String service = "orcl"; // Replace "XE" with your Oracle service name if different
 
-    public final static String password = "new_password";
-
-
+    public final static String path = "jdbc:oracle:thin:@" + url + ":" + port + ":" + service;
+    public final static String username = "expense_tracker_test";
+    public final static String password = "expense_tracker_test";
 }

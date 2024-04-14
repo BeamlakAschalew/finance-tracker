@@ -23,7 +23,7 @@ public class UpdateTransaction {
 
     // this method updates an existing transaction
     public boolean updateTransaction() {
-        String query = "UPDATE transactions SET amount = ?, date = ?, type = ?, category_id = ?, notes = ? WHERE txn_id = ?";
+        String query = "UPDATE transactions SET amount = ?, txn_date = TO_DATE(?, 'YYYY-MM-DD'), type = ?, category_id = ?, notes = ? WHERE txn_id = ?";
         try {
             Connection conn = DBInstance.connectDB();
             PreparedStatement statement = conn.prepareStatement(query);
