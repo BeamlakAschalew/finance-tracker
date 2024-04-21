@@ -2,9 +2,7 @@ package db_controller;
 
 import model.SignupResponse;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 
 public class SignupUser {
     private final String firstName;
@@ -33,34 +31,45 @@ public class SignupUser {
 
     // this method registers a user and returns a SignupResponse object
     public SignupResponse registerUser() {
-        String query = "INSERT INTO users (first_name, last_name, username, email, password) VALUES (?, ?, ?, ?, (SELECT standard_hash(?, 'MD5') FROM dual))";
+        String query = "{ call register_user(?, ?, ?, ?, ?, ?) }";
         try {
             Connection conn = DBInstance.connectDB();
-            PreparedStatement statement = conn.prepareStatement(query);
+            CallableStatement statement = conn.prepareCall(query);
 
-            // replace the placeholders with the actual user input
+            // Set the input parameters
             statement.setString(1, firstName);
             statement.setString(2, lastName);
             statement.setString(3, username);
             statement.setString(4, email);
             statement.setString(5, password);
 
-            // execute the create user operation
-            int affectedRowsCount = statement.executeUpdate();
+            // Register the OUT parameter for the return value
+            statement.registerOutParameter(6, Types.INTEGER);
 
-            // check if the affected rows are 1 and return a SignupResponse with error code 0 which is successful
-            if (affectedRowsCount == 1) {
+            // Execute the stored procedure
+            statement.execute();
+
+            // Get the return value
+            int v_result = statement.getInt(6);
+
+            System.out.println(v_result + " V RESULT");
+
+            // Check the return value and handle accordingly
+            if (v_result == 1) {
                 return new SignupResponse(0);
+            } else if (v_result == -1) {
+                // Username already exists
+                return new SignupResponse(-1);
+            } else {
+                // Unknown error
+                return new SignupResponse(-3);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            // return a SignupResponse with error code 3 which is unknown error
+            // Return a SignupResponse with error code 3 (unknown error)
             return new SignupResponse(3);
         }
 
-        // the code shouldn't reach this stage but if it does it's probably an error so return error code 3
-        // return a SignupResponse with error code 3
-        return new SignupResponse(3);
     }
 
     // this method updates a user and returns true if it succeeded and false if it failed

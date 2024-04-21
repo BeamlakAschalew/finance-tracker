@@ -137,10 +137,10 @@ public class SignupUI extends JPanel {
                     parentLayout.show(parentPanel, "loginScreen");
 
                 //  since errorCode 1 is username or email already existing we'll show error dialog pane
-                } else if (response.getErrorCode() == 1) {
-                    Components.displayOptionPane("Username or email already exists", 0);
+                } else if (response.getErrorCode() == -1) {
+                    Components.displayOptionPane("Username already exists", 0);
                 // since errorCode 3 is general error we'll display "Unknown error occurred"
-                } else if (response.getErrorCode() == 3) {
+                } else if (response.getErrorCode() == -2 || response.getErrorCode() == -3) {
                     Components.displayOptionPane("Unknown error occurred on signup", 0);
                 }
             }
@@ -162,31 +162,31 @@ public class SignupUI extends JPanel {
         // Check if username is less than 5 characters and show error message then return SignupResponse with errorCode 2
         if (username.length() < 5) {
             Components.displayOptionPane("Username should be at least 5 characters long", 0);
-            return new SignupResponse(2);
+            return new SignupResponse(-2);
         }
 
         // Check if password is less than 8 characters and show error message then return SignupResponse with errorCode 2
         if (password.length() < 8) {
             Components.displayOptionPane("Password should be at least 8 characters long", 0);
-            return new SignupResponse(2);
+            return new SignupResponse(-2);
         }
 
         // Check if password and passwordConformation don't match and show error message then return SignupResponse with errorCode 2
         if (passwordRepeat.compareTo(password) != 0) {
             Components.displayOptionPane("The passwords entered don't match", 0);
-            return new SignupResponse(2);
+            return new SignupResponse(-2);
         }
 
         // Check if first name or last name is less than 2 characters and show error message then return SignupResponse with errorCode 2
         if (firstName.length() < 2 || lastName.length() < 2) {
             Components.displayOptionPane("Name should be at least 2 characters long", 0);
-            return new SignupResponse(2);
+            return new SignupResponse(-2);
         }
 
         // Check if email doesn't include the '@' character
         if (!email.contains("@")) {
             Components.displayOptionPane("Enter a valid email address", 0);
-            return new SignupResponse(2);
+            return new SignupResponse(-2);
         }
 
         // The code will reach to this point only if the above validations are successful
@@ -197,7 +197,7 @@ public class SignupUI extends JPanel {
         // invoke the checkUsernameAndEmail method, this check whether the username or email exist
         // and if it exists it will return a SignupResponse with errorCode 1
         if (signup.checkUsernameAndEmail()) {
-            return new SignupResponse(1);
+            return new SignupResponse(-1);
         }
 
         // At this point, all the inputs are validated and the username and email is unique
