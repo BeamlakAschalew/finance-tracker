@@ -7,6 +7,6 @@ public class DBConfig {
     final static String service = "orcl"; // Replace "XE" with your Oracle service name if different
 
     public final static String path = "jdbc:oracle:thin:@" + url + ":" + port + ":" + service;
-    public final static String username = "expense_tracker_test";
-    public final static String password = "expense_tracker_test";
+    public final static String username = "expense_tracker_v2";
+    public final static String password = "expense_tracker";
 }
